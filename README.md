@@ -17,14 +17,28 @@
 ```bash
 python -m pip install virtualenv
 ```
-
-2.  安装环境
-
+2. 新建并运行env
 ```bash
-python -m pip install requirements.txt -r
+python -m venv .env
+.env/Scripts/activate
 ```
 
-3.  开始使用！
+3.  安装环境
+
+```bash
+pip install requirements.txt -r
+```
+
+4.  开始使用！
+```bash
+cd src
+python ./main.py
+```
+5. 编译
+```bash
+pip install pyinstaller 
+pyinstaller -F ./src/main.py
+```
 
 #### 使用说明
 
