@@ -1,7 +1,7 @@
 from typing import List, Dict, Tuple
 
-from constants import *
-from logger import get_log
+from utils.constants import *
+from utils.logger import get_log
 
 
 class Student:
@@ -34,9 +34,10 @@ class Student:
         self.name = name
         self.history = history
         self.group = group
+        self.wish: List[int] = []
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
     __repr__ = __str__
 
@@ -82,20 +83,17 @@ class SeatingTable:
         log.debug(f"Table num: {self.table_num}")
         if "GroupNum" not in self.table_num:  # If not defined, use default
             log.warning(
-                f"GroupNum is not in table_num, \
-                    creating a default table with {DEFAULT_GROUP_NUM} groups"
+                f"GroupNum is not in table_num, creating a default table with {DEFAULT_GROUP_NUM} groups"
             )
             self.table_num["GroupNum"] = DEFAULT_GROUP_NUM
         if "RowOfGroup" not in self.table_num:
             log.warning(
-                f"RowOfGroup is not in table_num, \
-                    creating a default table with {DEFAULT_ROW_OF_GROUP} rows in each group"
+                f"RowOfGroup is not in table_num, creating a default table with {DEFAULT_ROW_OF_GROUP} rows in each group"
             )
             self.table_num["RowOfGroup"] = DEFAULT_ROW_OF_GROUP
         if "ColumnOfDesk" not in self.table_num:
             log.warning(
-                f"ColumnOfDesk is not in table_num, \
-                creating a default table with {DEFAULT_COLUMN_OF_DESK} columns in each row"
+                f"ColumnOfDesk is not in table_num, creating a default table with {DEFAULT_COLUMN_OF_DESK} columns in each row"
             )
             self.table_num["ColumnOfDesk"] = DEFAULT_COLUMN_OF_DESK
         students_num = len(self.students)
@@ -104,19 +102,28 @@ class SeatingTable:
         log.debug(f"Seats num: {seats_num}")
         if students_num > seats_num:  # Not enough seats
             log.error(
-                f"Not enough seats for students, \
-                    expect {students_num},found {seats_num}"
+                f"Not enough seats for students, expect {students_num},found {seats_num}"
             )
             raise ValueError("Not enough seats for students")
         elif students_num < seats_num:  # Not enough students
             log.warning(
-                f"Not enough students for seats, \
-                expect {seats_num},found {students_num}. \
-                    Putting placeholders instead"
+                f"Not enough students for seats, expect {seats_num},found {students_num}. Putting placeholders instead"
             )
             students.extend([Student(id=i) for i in range(students_num, seats_num)])
         log.info("Check succeeded")
+        # Initialize table
+        log.info("Initializing table")
+        for i in range(self.table_num["GroupNum"]):
+            self.table.append([])
+            for j in range(self.table_num["RowOfGroup"][i]):
+                self.table[i].append([])
+                for _ in range(self.table_num["ColumnOfDesk"]):
+                    self.table[i][j].append(None)
+        log.info("Initialization of table completed")
 
+    def parse_rules(self):
+        """Parse the rules in the SeatingTable."""
+        log = get_log()
         # For black lists
         log.info(f"Putting black list into rules...")
         log.debug(f"Black list: {self.rules['Blacklist']}")
@@ -132,15 +139,21 @@ class SeatingTable:
             self.students[id].white_list = white
         log.info("Putting white list into rules completed")
 
-        # Initialize table
-        log.info("Initializing table")
+    def __str__(self) -> str:
+        """Generate the string representation of the SeatingTable.
+        Returns:
+            str: The string representation of the SeatingTable.
+        """
+        result = ""
         for i in range(self.table_num["GroupNum"]):
-            self.table.append([])
             for j in range(self.table_num["RowOfGroup"][i]):
-                self.table[i].append([])
-                for _ in range(self.table_num["ColumnOfDesk"]):
-                    self.table[i][j].append(None)
-        log.info("Initialization of table completed")
+                for k in range(self.table_num["ColumnOfDesk"]):
+                    result += str(self.table[i][j][k]) + " "
+                result += "\n"
+            result += "\n"
+        return result
+
+    __repr__ = __str__
 
 
 if __name__ == "__main__":

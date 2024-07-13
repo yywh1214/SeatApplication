@@ -14,7 +14,15 @@ handlers:
     level: INFO
     formatter: simple
     filename: log/info.log
-    when: S
+    when: H
+    backupCount: 20
+    encoding: utf8
+  debug_file_handler:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: DEBUG
+    formatter: simple
+    filename: log/debug.log
+    when: H
     backupCount: 20
     encoding: utf8
   error_file_handler:
@@ -22,7 +30,7 @@ handlers:
     level: ERROR
     formatter: simple
     filename: log/errors.log
-    when: S
+    when: H
     backupCount: 20
     encoding: utf8
 loggers:
@@ -32,4 +40,4 @@ loggers:
     propagate: no
 root:
   level: INFO
-  handlers: [console, info_file_handler, error_file_handler]
+  handlers: [console, info_file_handler, error_file_handler, debug_file_handler]

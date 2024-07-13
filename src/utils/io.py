@@ -21,13 +21,14 @@ def read_name():
     log.info("Adding students...")
 
     result_students: List[Student] = []
-    for id, cur in enumerate(name["Student"]):
+    for id, cur in enumerate(name["Students"]):
         log.debug(f"Creating student with id: {id}, name: {cur['name']}...")
         result_students.append(Student(id=id, **cur))
 
-    for group_name, members in name["Group"].items():
-        log.debug(f"Adding members: {members} to group: {group_name}...")
-        result_students[id].group = group_name
+    for group_name, members in name["Groups"].items():
+        for member in members:
+            log.debug(f"Adding member: {member} to group: {group_name}...")
+            result_students[member].group = group_name
     log.info("Adding students completed")
     return result_students
 
@@ -40,6 +41,7 @@ def read_rules():
     """
     log = get_log()
     log.info("Reading rules...")
+    log.debug(f"Reading from {RULES_FILE}...")
     with open(RULES_FILE, "r") as file:
         rules = yaml.safe_load(file)
     log.info("Reading rules completed")
@@ -55,6 +57,7 @@ def read_table():
         Dict[str, int | List[int]]: The settings of the table.
     """
     log = get_log()
+    log.debug(f"Reading from {TABLE_FILE}...")
     log.info("Reading table...")
     with open(TABLE_FILE, "r") as file:
         table = yaml.safe_load(file)
@@ -62,7 +65,7 @@ def read_table():
     return table
 
 
-def get_table():
+def get_table() -> SeatingTable:
     """Create a SeatingTable object by reading the names, rules, and table settings from their respective files.
 
     Returns:
@@ -75,7 +78,6 @@ def get_table():
     log.info("Creating SeatingTable...")
     log.debug(f"tables: {tables}")
     log.debug(f"rules: {rules}")
-    log.debug(f"names: {names}")
     seating = SeatingTable(tables, rules, names)
     log.info("Creation of table completed")
     return seating

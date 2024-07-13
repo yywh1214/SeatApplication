@@ -39,7 +39,9 @@ def get_log(**kwargs):
         setup_logging(default_level=logging.DEBUG, **kwargs)
     else:
         setup_logging(**kwargs)
-    return logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    return logger
 
 
 if __name__ == "__main__":

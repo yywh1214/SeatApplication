@@ -1,17 +1,15 @@
-import utils.constants
-import utils.core
+from utils.constants import *
 from utils.logger import get_log
-
-log = get_log()
+from utils.core import generate
 
 
 class CLI:
-    """The CLI display class."""
-
     def __init__(self):
         pass
 
     def start(self):
-        """The main function to start the CLI display."""
-        log.info("Starting CLI display...")
-        utils.core.rdesk()
+        log = get_log()
+        log.info("Start cli...")
+        table = generate()
+        print(table)
+        log.info("End cli...")
