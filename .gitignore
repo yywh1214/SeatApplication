@@ -141,4 +141,5 @@ cython_debug/
 *.zip
 
 # Data files
-assets/
+log/
+assets/history/

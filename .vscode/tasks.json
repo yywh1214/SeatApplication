@@ -19,7 +19,7 @@
 				"docker-build"
 			],
 			"python": {
-				"file": "src\\main.py"
+				"file": "src/main.py"
 			}
 		}
 	]

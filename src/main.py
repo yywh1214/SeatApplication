@@ -1,14 +1,27 @@
-import utils.constants
-import display.gui
+import logging
+
+from utils.constants import *
+from utils.logger import get_log
+from display.gui import GUI
+from display.cli import CLI
+
+log = get_log()
 
 
 def main():
-    if utils.constants.DEBUG:
-        print("Project Dir: %s" % utils.constants.PROJECT_DIR)
-        print("Assets Dir: %s" % utils.constants.ASSETS_DIR)
-        print("CLI Start")
-    displayer = display.gui.GUI()
-    displayer.start()
+    log.debug("Current dir: {}".format(PROJECT_DIR))
+    log.info("Main starting...")
+    log.debug("Current display mode: {}".format(DISPLAY_MODE))
+    log.info("Display creating...")
+    if DISPLAY_MODE:
+        display = GUI()
+    else:
+        display = CLI()
+    log.info("Display create success!")
+    log.info("Display starting...")
+    display.start()
+    log.info("Display start success!")
+    log.info("Main file exited with 0")
 
 
 if __name__ == "__main__":

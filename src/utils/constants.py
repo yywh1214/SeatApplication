@@ -1,15 +1,19 @@
 import sys, os, time
 
+
 PROJECT_DIR = os.path.join(os.path.dirname(sys.argv[0]), os.path.pardir)
 DEBUG: int = 1
+DISPLAY_MODE = 0
 
 # [DEP] DATA_DIR = os.path.join(PROJECT_DIR, "dat")
 ASSETS_DIR = os.path.join(PROJECT_DIR, "assets")
 SETTINGS_DIR = os.path.join(ASSETS_DIR, "settings")
+LOGGING_DIR = os.path.join(PROJECT_DIR, "log")
 
 NAME_FILE = os.path.join(SETTINGS_DIR, "name.txt")
 RULES_FILE = os.path.join(SETTINGS_DIR, "rules.txt")
 TABLE_FILE = os.path.join(SETTINGS_DIR, "table.txt")
+LOGGING_SETTINGS = os.path.join(SETTINGS_DIR, "logging.yaml")
 
 OUTPUT_DIR = os.path.join(ASSETS_DIR, "history")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, str(time.time()) + ".txt")
