@@ -10,7 +10,7 @@ def read_name():
     """Read student names from a YAML file and return a dictionary of students.
 
     Returns:
-        Dict[str, List[Student]]: The list of students in their groups.
+        List[Student]: The list of students in their groups.
     """
     log = get_log()
     log.info("Reading name...")
@@ -25,27 +25,35 @@ def read_name():
         log.debug(f"Creating student with id: {id}, name: {cur['name']}...")
         result_students.append(Student(id=id, **cur))
 
-    result_groups: Dict[str, List[Student]] = {}
-    for group_name in name["Group"].keys():
-        log.debug(f"Creating group: {group_name}...")
-        result_groups[group_name] = []
     for group_name, members in name["Group"].items():
         log.debug(f"Adding members: {members} to group: {group_name}...")
-        result_groups[group_name].append(result_students[id] for id in members)
+        result_students[id].group = group_name
     log.info("Adding students completed")
-    return result_groups
+    return result_students
 
 
 def read_rules():
+    """Read rules from a YAML file and return a dictionary of rules.
+
+    Returns:
+        Dict[str, Dict[int, List[int]]]: The rules for the table.
+    """
     log = get_log()
     log.info("Reading rules...")
     with open(RULES_FILE, "r") as file:
         rules = yaml.safe_load(file)
     log.info("Reading rules completed")
+    log.debug(f"Whitelist: {rules['Whitelist']}")
+    log.debug(f"Blacklist: {rules['Blacklist']}")
     return rules
 
 
 def read_table():
+    """Read the size of the table
+
+    Returns:
+        Dict[str, int | List[int]]: The settings of the table.
+    """
     log = get_log()
     log.info("Reading table...")
     with open(TABLE_FILE, "r") as file:
@@ -55,6 +63,19 @@ def read_table():
 
 
 def get_table():
+    """Create a SeatingTable object by reading the names, rules, and table settings from their respective files.
+
+    Returns:
+        SeatingTable: The created SeatingTable object.
+    """
+    log = get_log()
     names = read_name()
     rules = read_rules()
     tables = read_table()
+    log.info("Creating SeatingTable...")
+    log.debug(f"tables: {tables}")
+    log.debug(f"rules: {rules}")
+    log.debug(f"names: {names}")
+    seating = SeatingTable(tables, rules, names)
+    log.info("Creation of table completed")
+    return seating
