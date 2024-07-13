@@ -1,5 +1,14 @@
 {
-  "python.testing.unittestArgs": ["-v", "-s", "./src/", "-p", "test_*.py"],
+  "python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    "./src/",
+    "-p",
+    "test_*.py"
+  ],
   "python.testing.pytestEnabled": false,
-  "python.testing.unittestEnabled": true
+  "python.testing.unittestEnabled": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/prometheus.rules.json": "file:///home/lkrkerry/Documents/works/SeatApplication/assets/settings/rules.yaml"
+  }
 }

@@ -1,35 +1,35 @@
 version: 1
 disable_existing_loggers: False
 formatters:
-        simple:
-            format: "[%(levelname)s] %(asctime)s - %(module)s.%(funcName)s:%(lineno)d - %(message)s"
+  simple:
+    format: "[%(levelname)s] %(asctime)s - %(module)s.%(funcName)s:%(lineno)d - %(message)s"
 handlers:
-    console:
-            class: logging.StreamHandler
-            level: DEBUG
-            formatter: simple
-            stream: ext://sys.stdout
-    info_file_handler:
-            class: logging.handlers.TimedRotatingFileHandler
-            level: INFO
-            formatter: simple
-            filename: log/info.log
-            when: S
-            backupCount: 20
-            encoding: utf8
-    error_file_handler:
-            class: logging.handlers.TimedRotatingFileHandler
-            level: ERROR
-            formatter: simple
-            filename: log/errors.log
-            when: S
-            backupCount: 20
-            encoding: utf8
-loggers:
-    my_module:
-            level: ERROR
-            handlers: [info_file_handler]
-            propagate: no
-root:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+  info_file_handler:
+    class: logging.handlers.TimedRotatingFileHandler
     level: INFO
-    handlers: [console,info_file_handler,error_file_handler]
+    formatter: simple
+    filename: log/info.log
+    when: S
+    backupCount: 20
+    encoding: utf8
+  error_file_handler:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: ERROR
+    formatter: simple
+    filename: log/errors.log
+    when: S
+    backupCount: 20
+    encoding: utf8
+loggers:
+  my_module:
+    level: ERROR
+    handlers: [info_file_handler]
+    propagate: no
+root:
+  level: INFO
+  handlers: [console, info_file_handler, error_file_handler]

@@ -10,19 +10,21 @@ class Student:
     def __init__(
         self,
         black_list: List[int] = [],
-        white_list: int = -1,
+        white_list: List[int] = [],
         id: int = -1,
         name: str = "",
         history: List[List[int]] = [],
+        group: str = "",
     ):
         """Create a Student
 
         Args:
             black_list (List[int], optional): The students who can't sit with it(by id). Defaults to [].
-            white_list (int, optional): The students who must sit with(by id). Defaults to -1.
+            white_list (List[int], optional): The students who must sit with(by id). Defaults to [].
             id (int, optional): The students' id. Defaults to -1.
             name (str, optional): The students' name. Defaults to "".
             history (List[List[int]], optional): The students' history. Defaults to [].
+            group (str, optional): The students' group. Defaults to "".
         """
         log = get_log()
         log.debug(f"Creating student with id: {id}, name: {name}")
@@ -31,6 +33,7 @@ class Student:
         self.id = id
         self.name = name
         self.history = history
+        self.group = group
 
     def __str__(self) -> str:
         return self.name
@@ -42,16 +45,27 @@ class Student:
 
 
 class SeatingTable:
+    """The SeatingTable class."""
 
     def __init__(
         self,
         table_num: Dict[str, int | List[int]] = {},
-        rules: Dict[str, Dict[int, int | List[int]]] = {
-            "whitelist": {},
-            "blacklist": {},
+        rules: Dict[str, Dict[int, List[int]]] = {
+            "Whitelist": {},
+            "Blacklist": {},
         },
         students: List[Student] = [],
     ):
+        """Create a SeatingTable
+
+        Args:
+            table_num (Dict[str, int | List[int]], optional): The settings. Defaults to {}.
+            rules (Dict[str, Dict[int, List[int]]], optional): The rules for the table. Defaults to { "Whitelist": {}, "Blacklist": {}, }.
+            students (List[Student], optional): The students you wish to put. Defaults to [].
+
+        Raises:
+            ValueError: When the number of students is more than the seats.
+        """
         log = get_log()
         log.info("Creating SeatingTable...")
         log.debug(f"table_num: {table_num}")
@@ -63,60 +77,69 @@ class SeatingTable:
         self.table: List[List[List[Student]]] = []
         log.info("Creation of table completed")
 
+        # Start check
+        log.info("Starting check...")
+        log.debug(f"Table num: {self.table_num}")
+        if "GroupNum" not in self.table_num:  # If not defined, use default
+            log.warning(
+                f"GroupNum is not in table_num, \
+                    creating a default table with {DEFAULT_GROUP_NUM} groups"
+            )
+            self.table_num["GroupNum"] = DEFAULT_GROUP_NUM
+        if "RowOfGroup" not in self.table_num:
+            log.warning(
+                f"RowOfGroup is not in table_num, \
+                    creating a default table with {DEFAULT_ROW_OF_GROUP} rows in each group"
+            )
+            self.table_num["RowOfGroup"] = DEFAULT_ROW_OF_GROUP
+        if "ColumnOfDesk" not in self.table_num:
+            log.warning(
+                f"ColumnOfDesk is not in table_num, \
+                creating a default table with {DEFAULT_COLUMN_OF_DESK} columns in each row"
+            )
+            self.table_num["ColumnOfDesk"] = DEFAULT_COLUMN_OF_DESK
+        students_num = len(self.students)
+        log.debug(f"Students num: {students_num}")
+        seats_num = sum(self.table_num["RowOfGroup"]) * self.table_num["ColumnOfDesk"]
+        log.debug(f"Seats num: {seats_num}")
+        if students_num > seats_num:  # Not enough seats
+            log.error(
+                f"Not enough seats for students, \
+                    expect {students_num},found {seats_num}"
+            )
+            raise ValueError("Not enough seats for students")
+        elif students_num < seats_num:  # Not enough students
+            log.warning(
+                f"Not enough students for seats, \
+                expect {seats_num},found {students_num}. \
+                    Putting placeholders instead"
+            )
+            students.extend([Student(id=i) for i in range(students_num, seats_num)])
+        log.info("Check succeeded")
+
         # For black lists
         log.info(f"Putting black list into rules...")
-        log.debug(f"Black list: {self.rules['blacklist']}")
-        for id, black in self.rules["blacklist"].items():
-            log.debug(f"Assigning blacklist for {id} into {black}")
+        log.debug(f"Black list: {self.rules['Blacklist']}")
+        for id, black in self.rules["Blacklist"].items():
+            log.debug(f"Assigning Blacklist for {id} into {black}")
             self.students[id].black_list = black
         log.info("Putting black list into rules completed")
         # For white lists
         log.info(f"Putting white list into rules...")
-        log.debug(f"White list: {self.rules['whitelist']}")
-        for id, white in self.rules["whitelist"].items():
-            log.debug(f"Assigning whitelist for {id} into {white}")
+        log.debug(f"White list: {self.rules['Whitelist']}")
+        for id, white in self.rules["Whitelist"].items():
+            log.debug(f"Assigning Whitelist for {id} into {white}")
             self.students[id].white_list = white
         log.info("Putting white list into rules completed")
 
         # Initialize table
         log.info("Initializing table")
-        log.debug(f"Table num: {self.table_num}")
-        if "GroupNum" in self.table_num:
-            log.debug(f"Creating table with {self.table_num['GroupNum']} groups")
-            for _ in range(self.table_num["GroupNum"]):
-                self.table.append([])
-        else:
-            raise ValueError("GroupNum is not in table_num")
-        if "RowOfGroup" in self.table_num:
-            log.debug(
-                f"Creating table with {self.table_num['RowOfGroup']} rows in each group"
-            )
-            if len(self.table) != len(self.table_num["RowOfGroup"]):
-                raise ValueError(
-                    f"GroupNum and RowOfGroup should be the same, \
-                        but got {self.table_num['GroupNum']} \
-                            and {self.table_num['RowOfGroup']}"
-                )
-            for i, row_num in enumerate(self.table_num["RowOfGroup"]):
-                log.debug(f"Creating table with {row_num} columns in group {i}")
-                for _ in range(self.table_num["RowOfGroup"]):
-                    self.table[i].append([])
-        else:
-            raise ValueError("RowOfGroup is not in table_num")
-        if "ColumnOfDesk" in self.table_num:
-            log.debug(
-                f"Creating table with {self.table_num['ColumnOfDesk']} columns in each row"
-            )
-            for i in range(len(self.table)):
-                for j in range(len(self.table[i])):
-                    log.debug(
-                        f"Creating table with {self.table_num['ColumnOfDesk']} \
-                            empty students in row {i}, column {j}"
-                    )
-                    for _ in range(self.table_num["ColumnOfDesk"]):
-                        self.table[i][j].append(None)
-        else:
-            raise ValueError("ColumnOfDesk is not in table_num")
+        for i in range(self.table_num["GroupNum"]):
+            self.table.append([])
+            for j in range(self.table_num["RowOfGroup"][i]):
+                self.table[i].append([])
+                for _ in range(self.table_num["ColumnOfDesk"]):
+                    self.table[i][j].append(None)
         log.info("Initialization of table completed")
 
 
