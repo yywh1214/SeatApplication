@@ -165,6 +165,8 @@ class DirectedGraph:
         log.info("Start Dinic...")
         log.debug(f"s: {s}, t: {t}")
         ans = 0
+        for i in range(len(self.weight)):
+            shuffle(self.graph[i])
         while self.bfs(s, t):  # Split
             cur = [
                 0 if len(self.graph[i]) != 0 else -1

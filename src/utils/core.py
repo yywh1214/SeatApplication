@@ -66,8 +66,13 @@ def generate_one(
         for j in range(len(names)):
             if i == j:
                 continue
-            if graph.weight[i][j + len(names)] == 0:
+            if (
+                names[i].deskmate == -1
+                and names[j].deskmate == -1
+                and graph.weight[i][j + len(names)] == 0
+            ):
                 names[i].deskmate = j
+                names[j].deskmate = i
     return names
 
 
