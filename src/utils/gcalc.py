@@ -64,6 +64,7 @@ class DirectedGraph:
         self.out_angle: List[int] = []
         self.in_angle: List[int] = []
         for i in range(n):
+            self.graph[i] = []
             self.dep.append(0)
             self.out_angle.append(0)
             self.in_angle.append(0)
@@ -81,8 +82,6 @@ class DirectedGraph:
         """
         log = get_log()
         log.debug(f"Adding directional edge {x} and {y}, weight {w}")
-        if x not in self.graph:
-            self.graph[x] = []
         self.graph[x].append(y)
         self.weight[x][y] += w
         self.out_angle[x] += 1
@@ -100,7 +99,7 @@ class DirectedGraph:
         log.info("Start BFS...")
         log.debug(f"s: {s}, t: {t}")
         log.debug(f"weight: {self.weight}")
-        self.dep = [0] * len(self.graph)
+        self.dep = [0] * len(self.weight)
         self.dep[s] = 1
         queue = [s]
         while queue:
@@ -129,10 +128,10 @@ class DirectedGraph:
         log = get_log()
         log.info("Start DFS...")
         log.debug(f"u: {u}, flow: {flow}, cur: {cur}, dep: {self.dep}")
-        if cur[u] == -1:
-            return 0
         if u == t:
             return flow
+        if cur[u] == -1:
+            return 0
         tmp = flow
         for i in range(cur[u], len(self.graph[u])):
             if tmp <= 0:
@@ -176,3 +175,56 @@ class DirectedGraph:
         log.info("Dinic completed")
         log.debug(f"Final ans: {ans}")
         return ans
+
+
+class UndirectedGraph:
+    def __init__(self, n: int):
+        """Initialize the graph
+
+        Args:
+            n (int): The number of students
+        """
+        self.graph: Dict[int, List[int]] = {}
+        self.weight: List[List[int]] = []
+        for i in range(n):
+            self.graph[i] = []
+            self.weight.append([])
+            for _ in range(n):
+                self.weight[i].append(0)
+
+    def add_edge(self, x: int, y: int, w: int):
+        """Add an edge between two students
+        Args:
+            x (int): The index of the first node.
+            y (int): The index of the second node.
+            w (int): The weight of the edge.
+        """
+        log = get_log()
+        log.info("Start adding edge...")
+        log.debug(f"x: {x}, y: {y}, w: {w}")
+        self.graph[x].append(y)
+        self.graph[y].append(x)
+        self.weight[x][y] = w
+        self.weight[y][x] = w
+
+    def to_flow(self) -> DirectedGraph:
+        """Convert the undirected graph to a directed graph
+        Returns:
+            DirectedGraph: The directed graph
+        """
+        log = get_log()
+        log.info("Start converting to flow...")
+        ret = DirectedGraph(len(self.weight) * 2 + 2)
+        s = len(self.weight) * 2
+        t = s + 1
+        log.info("Add edges...")
+        for i in range(len(self.weight)):
+            ret.add_edge(s, i, 1)
+            ret.add_edge(i + len(self.weight), t, 1)
+            for j in range(len(self.weight)):
+                if self.weight[i][j] > 0:
+                    ret.add_edge(
+                        i, j + len(self.weight), self.weight[i][j]
+                    )
+        log.info("Transfer done!")
+        return ret

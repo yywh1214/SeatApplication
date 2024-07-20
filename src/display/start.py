@@ -15,15 +15,21 @@ class Ui_StartWindow(MyWindow):
 
         # Play the vedio
         self.media_player = QtMultimedia.QMediaPlayer(
-            None, QtMultimedia.QMediaPlayer.VideoSurface
+            None, QtMultimedia.QMediaPlayer.VideoSurface  # type: ignore
         )
-        self.video_widget = PyQt5.QtMultimediaWidgets.QVideoWidget(self.main)
+        self.video_widget = PyQt5.QtMultimediaWidgets.QVideoWidget(
+            self.main
+        )
         self.video_widget.setGeometry(0, 0, 1600, 900)
         self.media_player.setVideoOutput(self.video_widget)
         if cst.DEBUG:
-            print("opening {}".format(cst.RANDOMIZE_VEDIO).replace("\\", "/"))
+            print(
+                "opening {}".format(cst.RANDOMIZE_VEDIO).replace("\\", "/")
+            )
         self.media = QtMultimedia.QMediaContent(
-            QtCore.QUrl.fromLocalFile(cst.RANDOMIZE_VEDIO.replace("\\", "/"))
+            QtCore.QUrl.fromLocalFile(
+                cst.RANDOMIZE_VEDIO.replace("\\", "/")
+            )
         )
         self.media_player.setMedia(self.media)
         self.video_widget.lower()
@@ -41,8 +47,12 @@ class Ui_StartWindow(MyWindow):
             QtWidgets.QHeaderView.Stretch
         )  # Fill all the space
         self.table.setGeometry(0, 0, 1600, 900)
-        self.table.verticalHeader().setVisible(False)  # Hide the first column
-        self.table.horizontalHeader().setVisible(False)  # Hide the first row
+        self.table.verticalHeader().setVisible(
+            False
+        )  # Hide the first column
+        self.table.horizontalHeader().setVisible(
+            False
+        )  # Hide the first row
         self.media_player.mediaStatusChanged.connect(self.finish)
         self.table.setEditTriggers(
             QtWidgets.QAbstractItemView.NoEditTriggers
@@ -70,7 +80,8 @@ class Ui_StartWindow(MyWindow):
 
     def finish(self):
         if (
-            self.media_player.mediaStatus() == QtMultimedia.QMediaPlayer.EndOfMedia
+            self.media_player.mediaStatus()
+            == QtMultimedia.QMediaPlayer.EndOfMedia
         ):  # The vedio has ended
             self.table.show()
             self.back.show()
@@ -78,7 +89,10 @@ class Ui_StartWindow(MyWindow):
             self.table.lower()
 
     def display(self, seating: SeatingTable):
-        self.col = seating.table_num["GroupNum"] * seating.table_num["LineOfGroup"]
+        self.col = (
+            seating.table_num["GroupNum"]
+            * seating.table_num["LineOfGroup"]
+        )
         self.row = max(*seating.table_num["ColumnOfGroup"])
         self.table.setColumnCount(self.col)
         self.table.setRowCount(self.row + 1)
@@ -100,9 +114,9 @@ class Ui_StartWindow(MyWindow):
                 ]
             ):
                 data = QtWidgets.QTableWidgetItem(
-                    seating.table[i // seating.table_num["LineOfGroup"]][j][
-                        i % seating.table_num["LineOfGroup"]
-                    ]
+                    seating.table[i // seating.table_num["LineOfGroup"]][
+                        j
+                    ][i % seating.table_num["LineOfGroup"]]
                 )
                 data.setFont(QtGui.QFont("宋体", 64, QtGui.QFont.Black))
                 data.setTextAlignment(QtCore.Qt.AlignCenter)
@@ -112,4 +126,6 @@ class Ui_StartWindow(MyWindow):
                     data,
                 )
         for i in range(seating.table_num["GroupNum"]):
-            self.table.setSpan(0, i * 2, 1, seating.table_num["LineOfGroup"])
+            self.table.setSpan(
+                0, i * 2, 1, seating.table_num["LineOfGroup"]
+            )

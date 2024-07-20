@@ -5,7 +5,7 @@ from utils.constants import *
 from utils.logger import get_log
 from utils.seating import Student, SeatingTable
 from utils.io import get_table
-from utils.gcalc import DSU, DirectedGraph
+from utils.gcalc import DirectedGraph, UndirectedGraph
 
 
 def rules_to_graph(
@@ -27,51 +27,31 @@ def rules_to_graph(
     log.info("Start generating pairing graph...")
     log.debug(f"rules: {rules}")
     log.info("Start making graphs")
-    graph = DirectedGraph(len(names) * 2 + 2)
     s = len(names) * 2
     t = s + 1
     # Connect them with their parent,
     # which might becomes his deskmate.
     # Change into bi-graph
-    log.debug("Connect s to left nodes")
+    log.info("Starting to make undirected graph")
+    graph = UndirectedGraph(len(names))
+    for u, vs in rules["Whitelist"].items():
+        for v in vs:
+            graph.add_edge(u, v, 1)
+    for u, vs in rules["Blacklist"].items():
+        if u in rules["Whitelist"]:
+            continue
+        for v in range(len(names)):
+            if v not in vs:
+                graph.add_edge(
+                    u, v, 1
+                )  # TODO: add history and change to bigger values
     for i in range(len(names)):
-        graph.add_edge(s, i, 1)
-        graph.add_edge(i, s, 0)
-    log.debug("Connect right nodes to t")
-    for i in range(len(names)):
-        graph.add_edge(i + len(names), t, 1)
-        graph.add_edge(t, i + len(names), 0)
-    log.info("Start connecting whitelist")
-    if rules["Whitelist"] != None:
-        for u, v in rules["Whitelist"].items():
-            log.debug(f"u: {u}, v: {v}")
-            for i in v:
-                graph.add_edge(u, i + len(names), 1)
-                graph.add_edge(i + len(names), u, 0)
-        log.debug("Connect else")
-    for i in range(len(names)):  # TODO: use DSU to optimize
-        for j in range(len(names)):
-            if i == j:
-                continue
-            if rules["Whitelist"] != None and i in rules["Whitelist"]:
-                continue
-            if (
-                rules["Blacklist"] != None
-                and rules["Blacklist"].get(j) != None
-                and i in rules["Blacklist"][j]
-            ):
-                continue
-            if (
-                rules["Blacklist"] != None
-                and rules["Blacklist"].get(i) != None
-                and j in rules["Blacklist"][i]
-            ):
-                continue
-            log.debug(f"u: {i}, v: {j}")
-            graph.add_edge(i, j + len(names), 1)
-            graph.add_edge(j + len(names), i, 0)
-    log.info("Done generating pairing graph")
-    return graph
+        if i not in rules["Blacklist"] and i not in rules["Whitelist"]:
+            for j in range(len(names)):
+                if i == j:
+                    continue
+                graph.add_edge(i, j, 1)
+    return graph.to_flow()
 
 
 def generate_one(graph: DirectedGraph, s: int, t: int) -> List[Student]:
