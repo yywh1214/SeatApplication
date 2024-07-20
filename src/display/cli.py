@@ -1,6 +1,6 @@
 from utils.constants import *
 from utils.logger import get_log
-from utils.core import generate
+from utils.core import generate_groups
 
 
 class CLI:
@@ -10,6 +10,6 @@ class CLI:
     def start(self):
         log = get_log()
         log.info("Start cli...")
-        table = generate()
+        table = generate_groups()
         print(table)
         log.info("End cli...")

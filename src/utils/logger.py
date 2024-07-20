@@ -7,7 +7,7 @@ from utils.constants import *
 
 def setup_logging(
     default_path: str = LOGGING_SETTINGS,
-    default_level: str = logging.INFO,
+    default_level: int = logging.INFO,
     env_key: str = "LOG_CFG",
 ):
     """Setup logging configuration.

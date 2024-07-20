@@ -10,5 +10,7 @@
   "python.testing.unittestEnabled": true,
   "yaml.schemas": {
     "https://json.schemastore.org/prometheus.rules.json": "file:///home/lkrkerry/Documents/works/SeatApplication/assets/settings/rules.yaml"
-  }
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true
 }

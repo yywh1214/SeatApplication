@@ -98,7 +98,7 @@ class SeatingTable:
             self.table_num["ColumnOfDesk"] = DEFAULT_COLUMN_OF_DESK
         students_num = len(self.students)
         log.debug(f"Students num: {students_num}")
-        seats_num = sum(self.table_num["RowOfGroup"]) * self.table_num["ColumnOfDesk"]
+        seats_num = sum(self.table_num["RowOfGroup"]) * self.table_num["ColumnOfDesk"]  # type: ignore
         log.debug(f"Seats num: {seats_num}")
         if students_num > seats_num:  # Not enough seats
             log.error(
@@ -109,16 +109,18 @@ class SeatingTable:
             log.warning(
                 f"Not enough students for seats, expect {seats_num},found {students_num}. Putting placeholders instead"
             )
-            students.extend([Student(id=i) for i in range(students_num, seats_num)])
+            students.extend(
+                [Student(id=i) for i in range(students_num, seats_num)]
+            )
         log.info("Check succeeded")
         # Initialize table
         log.info("Initializing table")
-        for i in range(self.table_num["GroupNum"]):
+        for i in range(self.table_num["GroupNum"]):  # type: ignore
             self.table.append([])
-            for j in range(self.table_num["RowOfGroup"][i]):
+            for j in range(self.table_num["RowOfGroup"][i]):  # type: ignore
                 self.table[i].append([])
-                for _ in range(self.table_num["ColumnOfDesk"]):
-                    self.table[i][j].append(None)
+                for _ in range(self.table_num["ColumnOfDesk"]):  # type: ignore
+                    self.table[i][j].append(None)  # type: ignore
         log.info("Initialization of table completed")
 
     def parse_rules(self):
@@ -145,9 +147,9 @@ class SeatingTable:
             str: The string representation of the SeatingTable.
         """
         result = ""
-        for i in range(self.table_num["GroupNum"]):
-            for j in range(self.table_num["RowOfGroup"][i]):
-                for k in range(self.table_num["ColumnOfDesk"]):
+        for i in range(self.table_num["GroupNum"]):  # type: ignore
+            for j in range(self.table_num["RowOfGroup"][i]):  # type: ignore
+                for k in range(self.table_num["ColumnOfDesk"]):  # type: ignore
                     result += str(self.table[i][j][k]) + " "
                 result += "\n"
             result += "\n"
