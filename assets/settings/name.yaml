@@ -4,7 +4,6 @@ Students:
   - name: 2
   - name: 3
   - name: 4
-  - name: 5
 
 Groups:
-  group1: [0, 1, 2, 3, 4, 5]
+  group1: [0, 1, 2, 3, 4]

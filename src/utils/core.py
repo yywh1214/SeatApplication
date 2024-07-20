@@ -1,6 +1,7 @@
 import random
 from typing import List, Dict, Tuple
 
+
 from utils.constants import *
 from utils.logger import get_log
 from utils.seating import Student, SeatingTable
@@ -54,12 +55,20 @@ def rules_to_graph(
     return graph.to_flow()
 
 
-def generate_one(graph: DirectedGraph, s: int, t: int) -> List[Student]:
+def generate_one(
+    graph: DirectedGraph, s: int, t: int, names: List[Student]
+) -> List[Student]:
     log = get_log()
     log.info("Start generating deskmates for one group...")
     answer = graph.dinic(s, t)
     log.debug(f"answer: {answer}")
-    raise NotImplementedError
+    for i in range(len(names)):
+        for j in range(len(names)):
+            if i == j:
+                continue
+            if graph.weight[i][j + len(names)] == 0:
+                names[i].deskmate = j
+    return names
 
 
 def generate_groups():
@@ -87,14 +96,20 @@ def generate_groups():
             generate_one(
                 rules_to_graph(
                     groups[group_name],
-                    table.rules,
+                    group_rules[group_name],
                 ),
                 len(groups[group_name]) * 2,
                 len(groups[group_name]) * 2 + 1,
+                groups[group_name],
             )
         )
-    desks = get_deskmates(names)
-    desks = list(desks.items())
+    desks = [
+        (name.id, name.deskmate)
+        for name in names
+        if name.id < name.deskmate or name.deskmate == -1
+    ]
+    while len(desks) < table.table_num["GroupNum"] * sum(table.table_num["RowOfGroup"]):  # type: ignore
+        desks.append((-1, -1))
     log.info("Start putting desks into table...")
     random.shuffle(desks)
     for i in range(table.table_num["GroupNum"]):  # type: ignore
@@ -112,9 +127,15 @@ def generate_groups():
             else:
                 table.table[i][j] = [None, None]  # type: ignore
             log.debug(
-                f"Put {current_desk[0]} and {current_desk[1]} \
-                    into table at ({i}, {j})"
+                f"Put {current_desk[0]} and {current_desk[1]} into table at ({i}, {j})"
             )
+    for i in range(table.table_num["GroupNum"]):  # type: ignore
+        for j in range(table.table_num["RowOfGroup"][i]):  # type: ignore
+            if None in table.table[i][j]:
+                table.table[i][j], table.table[-1][-1] = (
+                    table.table[-1][-1],
+                    table.table[i][j],
+                )
     log.debug(f"table: {table.table}")
     log.info("Done generating table")
     return table
@@ -170,51 +191,6 @@ def split_group(
             group_rules[key] = {"Blacklist": {}, "Whitelist": {}}
     log.info("Done split rules into groups")
     return groups, group_rules
-
-
-def get_deskmates(names: List[Student]):
-    """Given a list of Student objects, this function assigns deskmates to each student based on
-        their wish list.
-    Args:
-        names (List[Student]): A list of Student objects representing the students.
-    Returns:
-        result (Dict[int, int]): A dictionary mapping each student's ID to their deskmate's ID.
-        If a student has no deskmate, their ID is mapped to -1.
-    """
-    log = get_log()
-    log.info("Start getting deskmates...")
-    checked = [False] * len(names)
-    result: Dict[int, int] = {}
-    # Get deskmates randomly from the wishes
-    for name in names:
-        if checked[name.id]:
-            continue
-        checked[name.id] = True
-        found = False
-        random.shuffle(name.wish)
-        log.debug(f"Trying to find deskmate for {name.id}: {name.wish}")
-        for deskmate in name.wish:
-            if not checked[deskmate]:
-                log.debug(f"{name.id} has {deskmate} as deskmate")
-                checked[deskmate] = True
-                result[name.id] = deskmate
-                found = True
-                break
-        if not found:
-            log.warning(f"id: {name.id} has no deskmate")
-            result[name.id] = -1
-    # Change half of them, swap their left and right
-    log.info("Randomize left and right")
-    items = list(result.items())
-    random.shuffle(items)
-    for i in range(len(items) // 2):
-        log.debug(f"swaped left: {items[i][0]}, right: {items[i][1]}")
-        result[items[i][1]] = items[i][0]
-        result.pop(items[i][0])
-    log.debug(f"result: {result}")
-    log.info("Done randomizing left and right")
-    log.info("Done getting deskmates")
-    return result
 
 
 if __name__ == "__main__":

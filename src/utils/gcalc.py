@@ -1,4 +1,5 @@
 from typing import List, Dict
+from random import shuffle
 
 from utils.constants import *
 from utils.logger import get_log
@@ -102,6 +103,8 @@ class DirectedGraph:
         self.dep = [0] * len(self.weight)
         self.dep[s] = 1
         queue = [s]
+        # for i in range(len(self.weight)): # TODO: randomize the deskmates by changing their order
+        #     shuffle(self.graph[i])
         while queue:
             x = queue.pop(0)
             log.debug(f"BFS: {x}")
@@ -141,7 +144,7 @@ class DirectedGraph:
             if self.dep[v] == self.dep[u] + 1 and self.weight[u][v] > 0:
                 log.debug(f"DFS: {u} -> {v}")
                 res = self.dfs(v, t, min(flow, self.weight[u][v]), cur)
-                if res == 0:  # no more flow to v
+                if res == 0:  # no more flow from v
                     self.dep[v] = 0
                 self.weight[u][v] -= res
                 self.weight[v][u] += res

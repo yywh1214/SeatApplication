@@ -34,15 +34,12 @@ class Student:
         self.name = name
         self.history = history
         self.group = group
-        self.wish: List[int] = []
+        self.deskmate: int = -1
 
     def __str__(self) -> str:
         return str(self.name)
 
     __repr__ = __str__
-
-    def __eq__(self, other):
-        return self.id == other.id
 
 
 class SeatingTable:

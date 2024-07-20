@@ -35,12 +35,12 @@ def get_log(**kwargs):
     Returns:
         logging.Logger: The logger object you can use.
     """
+    logger = logging.getLogger(__name__)
     if DEBUG:
         setup_logging(default_level=logging.DEBUG, **kwargs)
+        logger.setLevel(logging.DEBUG)
     else:
         setup_logging(**kwargs)
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
     return logger
 
 
