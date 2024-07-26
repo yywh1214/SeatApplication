@@ -1,5 +1,3 @@
-import logging
-
 from utils.constants import *
 from utils.logger import get_log
 from display.gui import GUI

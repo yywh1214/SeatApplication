@@ -1,7 +1,9 @@
 import sys, os, time
 
 
-PROJECT_DIR = os.path.join(os.path.dirname(sys.argv[0]), os.path.pardir)
+PROJECT_DIR = os.path.join(
+    os.path.dirname(sys.argv[0]), os.path.pardir
+)
 DEBUG: int = 1
 DISPLAY_MODE = 0
 
@@ -28,8 +30,6 @@ DEL_BUTTON = os.path.join(AUDIO_DIR, "del.png")
 DEFAULT_GROUP_NUM = 3
 DEFAULT_ROW_OF_GROUP = [6, 6, 7]
 DEFAULT_COLUMN_OF_DESK = 2
-
-RETRY_TIMES = 3
 
 START_PROBABILITY = 100
 DELTA_PROBABILITY = [20, 15, 10, 5, 0]
