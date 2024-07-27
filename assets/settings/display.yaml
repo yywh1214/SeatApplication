@@ -1,0 +1,21 @@
+main_window:
+  geometry: [0, 0, 1600, 900]
+  fullscreen: false
+  show: true
+  show_window_buttons: true
+  show_window_title: true
+  show_window_icon: true
+  show_window_close_button: false
+  labels:
+    start:
+      name: startlab
+      geometry: [46, 304, 225, 103]
+    history:
+      name: historylab
+      geometry: [46, 437, 225, 103]
+    settings:
+      name: settingslab
+      geometry: [46, 570, 225, 103]
+    exit:
+      name: exitlab
+      geometry: [46, 703, 225, 103]

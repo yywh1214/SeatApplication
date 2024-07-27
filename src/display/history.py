@@ -1,6 +1,7 @@
 from display.widgets import *
 from utils import constants as cs
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtCore.Qt
 
 import os, time
 
@@ -21,7 +22,9 @@ class Ui_HistoryWindow(MyWindow):  # TODO: OOP
             if file.endswith(".dat"):
                 name = file[:-4]
                 time_array = time.localtime(float(name))
-                file = time.strftime("%Y-%m-%d %H:%M:%S", time_array)
+                file = time.strftime(
+                    "%Y-%m-%d %H:%M:%S", time_array
+                )
                 result.append(file)
         while len(result) <= cs.BUFFER_SIZE:
             result.append("")
@@ -34,7 +37,10 @@ class Ui_HistoryWindow(MyWindow):  # TODO: OOP
 
     def display(self, files):
         # nav
-        self.nav = [QtWidgets.QLabel("文件"), QtWidgets.QLabel("操作")]
+        self.nav = [
+            QtWidgets.QLabel("文件"),
+            QtWidgets.QLabel("操作"),
+        ]
         for i, n in enumerate(self.nav):
             n.setFont(QtGui.QFont("宋体", 32, QtGui.QFont.Black))
             self.glut.addWidget(n, 1, i)
@@ -42,13 +48,17 @@ class Ui_HistoryWindow(MyWindow):  # TODO: OOP
         for i, file in enumerate(files):  # Make an index column
 
             data = QtWidgets.QLabel(file)
-            data.setFont(QtGui.QFont("宋体", 32, QtGui.QFont.Black))
+            data.setFont(
+                QtGui.QFont("宋体", 32, QtGui.QFont.Black)
+            )
             self.glut.addWidget(data, i + 2, 0)
 
             buttons = QtWidgets.QWidget()
             button_glut = QtWidgets.QHBoxLayout()
             buttons.setLayout(button_glut)
-            self.glut.addWidget(buttons, i + 2, 1, QtCore.Qt.AlignLeft)
+            self.glut.addWidget(
+                buttons, i + 2, 1, QtCore.Qt.AlignLeft
+            )
 
             if file == "":
                 continue

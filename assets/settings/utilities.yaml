@@ -1,0 +1,44 @@
+# 启动项
+debug: 1
+display_mode: 0
+
+# 路径配置
+project_dir:
+  path: default
+  assets_dir:
+    path: "./assets"
+    settings_dir:
+      path: "./settings"
+      name_file:
+        path: "./name.yaml"
+      table_file:
+        path: "./table.yaml"
+      log_settings_file:
+        path: "./logging.yaml"
+      rule_file:
+        path: "./rule.yaml"
+      display_file:
+        path: "./display.yaml"
+    audio_dir:
+      path: "./audio"
+      rand_vedio:
+        path: "./randomize.avi"
+      bg_picture:
+        path: "./bg.png"
+      back_button_picture:
+        path: "./back.png"
+      open_button_picture:
+        path: "./open.png"
+      del_button_picture:
+        path: "./del.png"
+    output_dir:
+      path: "./output/"
+  logging_dir:
+    path: "./log/"
+
+# 默认项
+group_num: 3
+row_of_group: [6, 6, 7]
+column_of_desk: 2
+buffer_size: 10
+button_size: [50, 50]

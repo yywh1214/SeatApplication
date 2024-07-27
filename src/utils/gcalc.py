@@ -82,7 +82,9 @@ class DirectedGraph:
             w (int): The weight of the edge.
         """
         log = get_log()
-        log.debug(f"Adding directional edge {x} and {y}, weight {w}")
+        log.debug(
+            f"Adding directional edge {x} and {y}, weight {w}"
+        )
         self.graph[x].append(y)
         self.weight[x][y] += w
         self.out_angle[x] += 1
@@ -118,7 +120,9 @@ class DirectedGraph:
         log.warning(f"No path from {s} to {t}")
         return False
 
-    def dfs(self, u: int, t: int, flow: int, cur: List[int]) -> int:
+    def dfs(
+        self, u: int, t: int, flow: int, cur: List[int]
+    ) -> int:
         """Get and sum up all the routes from u to t
         Args:
             u (int): the current point in dfs
@@ -130,7 +134,9 @@ class DirectedGraph:
         """
         log = get_log()
         log.info("Start DFS...")
-        log.debug(f"u: {u}, flow: {flow}, cur: {cur}, dep: {self.dep}")
+        log.debug(
+            f"u: {u}, flow: {flow}, cur: {cur}, dep: {self.dep}"
+        )
         if u == t:
             return flow
         if cur[u] == -1:
@@ -141,9 +147,14 @@ class DirectedGraph:
                 break
             cur[u] = i
             v = self.graph[u][i]
-            if self.dep[v] == self.dep[u] + 1 and self.weight[u][v] > 0:
+            if (
+                self.dep[v] == self.dep[u] + 1
+                and self.weight[u][v] > 0
+            ):
                 log.debug(f"DFS: {u} -> {v}")
-                res = self.dfs(v, t, min(flow, self.weight[u][v]), cur)
+                res = self.dfs(
+                    v, t, min(flow, self.weight[u][v]), cur
+                )
                 if res == 0:  # no more flow from v
                     self.dep[v] = 0
                 self.weight[u][v] -= res
@@ -229,7 +240,9 @@ class UndirectedGraph:
             for j in range(len(self.weight)):
                 if self.weight[i][j] > 0:
                     ret.add_edge(
-                        i, j + len(self.weight), self.weight[i][j]
+                        i,
+                        j + len(self.weight),
+                        self.weight[i][j],
                     )
         log.info("Transfer done!")
         return ret
