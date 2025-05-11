@@ -1,0 +1,3 @@
+GroupNum=4
+LineOfGroup=2
+ColumnOfGroup=7,7,7,7
